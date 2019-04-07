@@ -1,13 +1,29 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
+class Sortbyroll implements Comparator<Job> 
+{ 
+    // Used for sorting in ascending order of 
+    // roll number 
+    public int compare(Job a, Job b) 
+    { 
+        return a.getEndTime() - b.getEndTime(); 
+    } 
+} 
 public class weightedintervalschedule {
+	
 	public static void main(String[] args) {
 
-		// Declare lecture array, use Comparator to run a min heap sort on Lecture start time
-		String[] values = null;
+		String[] extractor = null;
+		ArrayList<String> jobNames = new ArrayList<String>();
+		ArrayList<String> startTimes = new ArrayList<String>();
+		ArrayList<String> endTimes = new ArrayList<String>();
+		ArrayList<String> values = new ArrayList<String>();
+		
+		ArrayList<Job> jobs = new ArrayList<Job>();
+		
 //        String fileName = ReadUserInput();
+		
 		try {
 			File file = new File("jobs.txt"); 
 			@SuppressWarnings("resource")
@@ -18,27 +34,33 @@ public class weightedintervalschedule {
 		    	newLine = newLine.replace("(", "");
 		    	newLine = newLine.replace(")", "");
 		    	newLine = newLine.replace(" ", "");
-//		    	newLine = newLine.trim();
+
 		    	System.out.println(newLine);
-		    	int endingIndex = newLine.indexOf(",");
-		    	values = newLine.split(",");
-//		    	String className = newLine.substring(1, endingIndex);
-//		    	int startTime = Integer.parseInt(newLine.substring(4, 5));
-//		    	int endTime = Integer.parseInt(newLine.substring(7, 8));
+		    	extractor = newLine.split(",");
+		    	
+		    	jobNames.add(extractor[0]);
+		    	startTimes.add(extractor[1]);
+		    	endTimes.add(extractor[2]);
+		    	values.add(extractor[3]);
+		    	
+		    	jobs.add(	     new Job(extractor[0],
+		    			Integer.parseInt(extractor[1]),
+		    			Integer.parseInt(extractor[2]),
+		    			Integer.parseInt(extractor[3])));
 		    	
 		    }      
 		}
 		catch(IOException e) {
 			System.out.println("error, file name is incorrect reRun the program");	
 		}
-		for(String x : values) {
-			System.out.println("Er"+x);
-		}
-	
-	}
+		// Sort the array list by 
+		Collections.sort(jobs, new Sortbyroll());
 
-	// TODO this read from file doesn't take into account multiple digit numbers
-	// This is a fault of the implementation, but doesn't not compromise the algorithm results 
+		for(Job x : jobs) {
+			System.out.println(x.getValue());
+		}
+	}	
+
     public static String ReadUserInput() {
     	Scanner reader = new Scanner(System.in);
     	String userInput="";
@@ -53,5 +75,6 @@ public class weightedintervalschedule {
     	reader.close();
     	return userInput;
     }
+  
     
 }
