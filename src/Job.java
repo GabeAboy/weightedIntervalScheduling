@@ -1,28 +1,49 @@
 
 public class Job {
-	String jobName;
-	int startTime;
-	int endTime;
-	int value;
-	
+	private String jobName;
+	private int startTime;
+	private int endTime;
+	private int value;
+	private Job compatable; 
+	private int compatabilityIndex;
 	Job(String jobName,int startTime, int endTime, int value){
 		this.jobName=jobName;
 		this.startTime=startTime;
 		this.endTime=endTime;
 		this.value=value;
+		this.compatabilityIndex = Integer.MAX_VALUE;
 	}
 	
-	String jobName() {
+	public String jobName() {
 		return this.jobName;
 	}
-	int getStartTime() {
+	public int getStartTime() {
 		return this.startTime;
 	}
-	int getEndTime() {
+	public int getEndTime() {
 		return this.endTime;
 	}
-	int getValue(){
+	public int getValue(){
 		return this.value;
+	}
+	public void setCompatability(Job compatable) {
+		this.compatable = compatable;
+	}
+	public void setCompatabilityIndex(int index) {
+		this.compatabilityIndex= index;
+	}
+	public int getCompatabilityIndex() {
+		
+		if(this.compatabilityIndex!=Integer.MAX_VALUE) {
+			return this.compatabilityIndex;	
+		}
+		return 0;
+	}
+	public Job getCompatability() {
+		if(this.compatable!=null) {
+			return this.compatable;	
+		}
+		return null;
 	}
 
 }
