@@ -56,14 +56,15 @@ public class weightedintervalschedule {
 			M[i] = Integer.MAX_VALUE;
 		}
 		M[0] = 0;
-//		WeightedIntervalScheduling(jobs.size()-1);
+		System.out.println("Sorted Job Inputs:");
 
 		Collections.sort(jobs, new SortByEndTime());
 		for (Job x : jobs) {
-			System.out.println(x.jobName() + "  " + x.getStartTime() + " " + x.getEndTime() + " " + x.getValue());
+			System.out.println("{"+x.jobName() + "," + x.getStartTime() + "," + x.getEndTime() + "," + x.getValue()+"}");
 			// Compute p(j) for each job in jobs
 		}
-
+		System.out.println();
+		System.out.println("Compute P values");
 		// TODO Compute p(j)
 		int x = 0;
 		for (int j = jobs.size() - 1; j >= 0; j--) {
@@ -78,6 +79,11 @@ public class weightedintervalschedule {
 
 					jobs.get(j).setCompatability(jobs.get(i));
 					jobs.get(j).setCompatabilityIndex(i+1);
+					System.out.println("p("+j+") = " + i);
+				}
+				else {
+					
+					System.out.println("p("+j+") = " + i);
 				}
 			}
 			x++;
@@ -97,9 +103,21 @@ public class weightedintervalschedule {
 		}
 		System.out.println("Max weight " + WeightedIntervalScheduling(jobs.size()));
 
-		for (int pp : M) {
-			System.out.println(pp);
-			// Compute p(j) for each job in jobs
+		for (int i = 0; i<M.length; i++) {
+			System.out.println("M["+i+"] = "+M[i]);
+		}
+		
+		//Reset M
+		for (int i = 0; i < M.length; i++) {
+			M[i] = Integer.MAX_VALUE;
+		}
+		M[0] = 0;
+		
+		System.out.println("Iterative:" );
+		WeightedIntervalSchedulingIterative();
+
+		for (int i = 0; i<M.length; i++) {
+			System.out.println("M["+i+"] = "+M[i]);
 		}
 
 	}
@@ -125,6 +143,21 @@ public class weightedintervalschedule {
 		}
 
 		return M[j];
+
+	}
+	public static void WeightedIntervalSchedulingIterative() {
+		
+		for(int j = 1; j <= jobs.size(); j++) {
+		
+			System.out.println(j+" "+jobs.get(j-1).getValue()+" "+ M[jobs.get(j-1).getCompatabilityIndex()]);
+			if(jobs.get(j-1).getValue() + M[jobs.get(j-1).getCompatabilityIndex()] == M[j-1]) {
+				M[j] = jobs.get(j-1).getValue() + M[jobs.get(j-1).getCompatabilityIndex()];
+			}
+			else {
+			M[j] = Math.max(jobs.get(j-1).getValue() + M[jobs.get(j-1).getCompatabilityIndex()], M[j-1]);
+			}
+//			M[j] = Math.max(jobs.get(j-1).getValue()+ M[jobs.get(j-1).getCompatabilityIndex()], M[j-1]);
+		}
 
 	}
 
