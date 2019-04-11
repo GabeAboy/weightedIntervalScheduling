@@ -12,6 +12,7 @@ class SortByEndTime implements Comparator<Job> {
 
 public class weightedintervalschedule {
 	private static int M[] = null;
+	private static String Op[] = null;
 	private static ArrayList<Job> jobs = null;
 
 	public static void main(String[] args) {
@@ -24,10 +25,10 @@ public class weightedintervalschedule {
 
 		jobs = new ArrayList<Job>();
 
-//        String fileName = ReadUserInput();
+        String fileName = ReadUserInput();
 
 		try {
-			File file = new File("jobs.txt");
+			File file = new File(fileName);
 			@SuppressWarnings("resource")
 			Scanner sc = new Scanner(file);
 
@@ -52,6 +53,10 @@ public class weightedintervalschedule {
 		}
 
 		M = new int[jobs.size()+1];
+		Op = new String[jobs.size()+1];
+		for (int i = 0; i < Op.length; i++) {
+			Op[i] = "";
+		}
 		for (int i = 0; i < M.length; i++) {
 			M[i] = Integer.MAX_VALUE;
 		}
@@ -66,7 +71,7 @@ public class weightedintervalschedule {
 		System.out.println();
 		System.out.println("Compute P values");
 		// TODO Compute p(j)
-		int x = 0;
+		int x = 1;
 		for (int j = jobs.size() - 1; j >= 0; j--) {
 			// Need to find compatible with this
 			int jobJScannedEndTime = jobs.get(j).getStartTime();
@@ -79,29 +84,24 @@ public class weightedintervalschedule {
 
 					jobs.get(j).setCompatability(jobs.get(i));
 					jobs.get(j).setCompatabilityIndex(i+1);
-					System.out.println("p("+j+") = " + i);
-				}
-				else {
 					
-					System.out.println("p("+j+") = " + i);
 				}
+				
 			}
+			
+			
 			x++;
 		}
-		for (Job xx : jobs) {
-			Job nn = xx.getCompatability();
-			if (nn != null) {
-
-				System.out.println(xx.getEndTime() + "Compat" + Integer.toString(nn.getEndTime()));
+		
+		for(int i = 0; i<jobs.size();i++) {
+			if(jobs.get(i).getCompatability()!=null) {
+				System.out.println("p("+i+") = " + jobs.get(i).getCompatabilityIndex());
+			}else {				
+				System.out.println("p("+i+") = 0" );
 			}
-			// Compute p(j) for each job in jobs
 		}
-		System.out.println("sss" + jobs.get(2).getCompatabilityIndex());
-		for (int pp : M) {
-			System.out.println(pp);
-			// Compute p(j) for each job in jobs
-		}
-		System.out.println("Max weight " + WeightedIntervalScheduling(jobs.size()));
+
+		System.out.println("\nMax weight " + WeightedIntervalScheduling(jobs.size()));
 
 		for (int i = 0; i<M.length; i++) {
 			System.out.println("M["+i+"] = "+M[i]);
@@ -119,18 +119,17 @@ public class weightedintervalschedule {
 		for (int i = 0; i<M.length; i++) {
 			System.out.println("M["+i+"] = "+M[i]);
 		}
+		
+//		for (int i = 0; i<Op.length; i++) {
+//			System.out.println("Op["+i+"] = "+Op[i]);
+//		}
 
 	}
 
-	// Input: n, s1,sn, f1,fn v1...vn
-	// global array:M[0,n] M[j] = result of compute-opt(j)
+
+
 	public static int WeightedIntervalScheduling(int j) {
-//
-//		if (M[j] == Integer.MAX_VALUE) {
-//
-//			M[j] = Math.max(jobs.get(j).getValue() + WeightedIntervalScheduling(jobs.get(j).getCompatabilityIndex()),
-//					WeightedIntervalScheduling(j - 1));
-//		}
+
 		if (M[j] == Integer.MAX_VALUE) {
 			int a = jobs.get(j-1).getValue() + WeightedIntervalScheduling(jobs.get(j-1).getCompatabilityIndex());
 			int b = WeightedIntervalScheduling(j - 1);
@@ -148,32 +147,21 @@ public class weightedintervalschedule {
 	public static void WeightedIntervalSchedulingIterative() {
 		
 		for(int j = 1; j <= jobs.size(); j++) {
-		
-			System.out.println(j+" "+jobs.get(j-1).getValue()+" "+ M[jobs.get(j-1).getCompatabilityIndex()]);
 			if(jobs.get(j-1).getValue() + M[jobs.get(j-1).getCompatabilityIndex()] == M[j-1]) {
 				M[j] = jobs.get(j-1).getValue() + M[jobs.get(j-1).getCompatabilityIndex()];
+				Op[j] = Op[j]+=jobs.get(j-1).jobName();
 			}
 			else {
+			
 			M[j] = Math.max(jobs.get(j-1).getValue() + M[jobs.get(j-1).getCompatabilityIndex()], M[j-1]);
+			
+//			Op[j] = Op[j]+=jobs.get(j-1).jobName()+ ","+jobs.get(jobs.get(j-1).getCompatabilityIndex()).jobName();
 			}
-//			M[j] = Math.max(jobs.get(j-1).getValue()+ M[jobs.get(j-1).getCompatabilityIndex()], M[j-1]);
 		}
+		
 
 	}
 
-	// function to find
-
-	// compute p(1),p(2)
-
-	// for j=1 to n
-	// M[j] = empty
-	// M[0]=0
-	// run M-compute-opt(n)
-	// M-compute-opt(j){
-	// if(M[j] is empty)// not computed yet
-	// M[j] = max(vj + M-compute-opt(p(j)), M-compute-opt(p(j-1))
-	// return M[j]
-	// }
 	public static String ReadUserInput() {
 		Scanner reader = new Scanner(System.in);
 		String userInput = "";
